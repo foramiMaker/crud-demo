@@ -8,8 +8,8 @@
 # testing
 /coverage
 
-# Ignore node_modules in the frontend folder
-frontend/node_modules/
+# Ignore node_modules in the client folder
+client/node_modules/
 frontend/.pnp
 frontend/.pnp.js
 frontend/coverage
