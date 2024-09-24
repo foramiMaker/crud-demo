@@ -1,4 +1,7 @@
 const User = require("../models/product.model.js");
+const csv = require("csvtojson");
+
+const CsvParser = require("json2csv").Parser;
 
 const getUsers = async (req, res) => {
   try {
@@ -57,10 +60,51 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const exportUser = async (req, res) => {
+  try {
+    const users = [];
+    const userData = await User.find({});
+
+    userData.forEach((user) => {
+      const { id, name, email, mobile } = user;
+      users.push({ id, name, email, mobile });
+    });
+    const csvFields = ["id", "name", "email", "mobile"];
+    const csvParser = new CsvParser({ fields: csvFields });
+    const csvData = csvParser.parse(users);
+
+    res.setHeader("content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment;filename=usersData.csv");
+    res.status(200).end(csvData);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const importUser = async(req, res) => {
+  try {
+    const userData = [];
+    csv()
+      .fromFile(req.file.path)
+      .then(async(response) => {
+        for (let x = 0; x < response.length; x++) {
+          userData.push({
+            name: response[x].name,
+            email: response[x].email,
+            mobile: response[x].mobile,
+          });
+        }
+        await User.insertMany(userData);
+      });
+      res.send({status:200,success:true,msg:'Csv Imported'})
+  } catch {}
+};
 module.exports = {
   getUsers,
   getUser,
   createUser,
   updateUser,
   deleteUser,
+  exportUser,
+  importUser,
 };

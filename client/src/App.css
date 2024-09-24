@@ -6,6 +6,25 @@
   height: 40vmin;
   pointer-events: none;
 }
+.button {
+  display: flex;
+  justify-content: space-between;
+  width: 15vw;
+  align-items: center;
+  margin: 0 auto;
+  margin-top: 5px;
+}
+.form-detail{
+  display: flex;
+}
+.file-input{
+  width: 30vw;
+  margin-top: 10px;
+}
+.import{
+  height: 35px;
+  margin-left: 5px;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
@@ -36,13 +55,14 @@
     transform: rotate(360deg);
   }
 }
-.Add_button{
-  margin-top: 10px;
-  
+.Add_button {
+  margin-right: 10px;
+  width: 15vw;
+  /* align-items: center; */
 }
-.table{
+.table {
   margin-top: 10px;
 }
-.delete{
-  margin-left:15px;
+.delete {
+  margin-left: 15px;
 }
