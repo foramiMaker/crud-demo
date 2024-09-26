@@ -7,6 +7,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Table from "react-bootstrap/Table";
 import axios from "axios";
 import FormTable from "./FormTable";
+import Calender from "./Calender";
+import BookingDetail from "./BookingDetail";
 
 axios.defaults.baseURL = "http://localhost:8080/";
 
@@ -15,6 +17,8 @@ function Example() {
   const [editShow, setEditShow] = useState(false);
   const [dataList, setDataList] = useState([]);
   const [csvFile, setCsvFile] = useState(null);
+  const [showDatepicker, setShowDatepicker] = useState(false);
+  const [showBookingDetail, setShowBookingDetail] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -29,6 +33,10 @@ function Example() {
     mobile: "",
     id: "",
   });
+
+  const handleBookingClick = () => {
+    setShowDatepicker(true);
+  };
 
   const handleImportCsv = async () => {
     if (!csvFile) {
@@ -53,7 +61,7 @@ function Example() {
       console.error("Error importing CSV:", error);
     }
   };
-  
+
   const handleDownlod = async () => {
     try {
       const response = await axios.get("api/users/export", {
@@ -107,9 +115,15 @@ function Example() {
     }));
   };
 
+  const handleBookingDetailClick = () => {
+    setShowBookingDetail(true); // Toggle BookingDetail visibility
+  };
+
   const handleClose = () => {
     setShow(false);
     setEditShow(false);
+    setShowDatepicker(false);
+    setShowBookingDetail(false);
   };
   const handleShow = () => setShow(true);
   const handleEditShow = (el) => {
@@ -118,17 +132,15 @@ function Example() {
   };
 
   const handleChange = (e) => {
-    const { value, name,files } = e.target;
-    if(name==="file"){
+    const { value, name, files } = e.target;
+    if (name === "file") {
       setCsvFile(files[0]);
-    }
-    else{
+    } else {
       setFormData((prev) => ({
         ...prev,
         [name]: value,
       }));
     }
-   
   };
   // useEffect(async () => {
   //   console.log("gete");
@@ -182,39 +194,54 @@ function Example() {
   return (
     <>
       <div className="form-detail">
-       <Form>
-           
-           <input
-             type="file"
-             name="file"
-             className="file-input"
-             onChange={handleChange}
-             accept=".csv"
-           />
-         <Button variant="primary" onClick={handleImportCsv}  className="import">
-          Import
-        </Button> 
-         </Form>
-         
-     
-      <div className="button">
-       
-     
-       
-        <Button variant="primary" onClick={handleShow} className="Add_button">
-          Add
-        </Button>
+        <Form>
+          <input
+            type="file"
+            name="file"
+            className="file-input"
+            onChange={handleChange}
+            accept=".csv"
+          />
+          <Button
+            variant="primary"
+            onClick={handleImportCsv}
+            className="import"
+          >
+            Import
+          </Button>
+        </Form>
 
-        <Button
-          variant="primary"
-          className="download_button"
-          onClick={handleDownlod}
-        >
-          Download
-        </Button>
+        <div className="button">
+          <Button variant="primary" onClick={handleShow} className="Add_button">
+            Add
+          </Button>
+
+          <Button
+            variant="primary"
+            className="download_button"
+            onClick={handleDownlod}
+          >
+            Download
+          </Button>
+        </div>
       </div>
-    </div>
-     <Modal show={show || editShow} onHide={handleClose}>
+
+      <Button
+        variant="primary"
+        className="booking"
+        onClick={handleBookingClick}
+      >
+        Booking
+      </Button>
+      {/* {showDatepicker && <Calender handleClose={handleClose} />} */}
+      <Button
+        variant="primary"
+        className="details"
+        onClick={handleBookingDetailClick}
+      >
+        Booking Details
+      </Button>
+      <Modal show={show || editShow} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>{show ? "Add Form" : "Edit Form"}</Modal.Title>
         </Modal.Header>
@@ -238,7 +265,25 @@ function Example() {
           )}
         </Modal.Body>
       </Modal>
-
+     
+      <Modal show={showDatepicker} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>calender Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Calender handleClose={handleClose} />
+        </Modal.Body>
+      </Modal>
+      {/* Conditional rendering of BookingDetail */}
+      {/* Booking Detail Modal */}
+      <Modal show={showBookingDetail} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Booking Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <BookingDetail handleClose={handleClose} />
+        </Modal.Body>
+      </Modal>
       <Table striped bordered hover className="table">
         <thead>
           <tr>

@@ -1,4 +1,5 @@
 const User = require("../models/product.model.js");
+const Booking = require("../models/booking.model.js");
 const csv = require("csvtojson");
 
 const CsvParser = require("json2csv").Parser;
@@ -81,12 +82,12 @@ const exportUser = async (req, res) => {
   }
 };
 
-const importUser = async(req, res) => {
+const importUser = async (req, res) => {
   try {
     const userData = [];
     csv()
       .fromFile(req.file.path)
-      .then(async(response) => {
+      .then(async (response) => {
         for (let x = 0; x < response.length; x++) {
           userData.push({
             name: response[x].name,
@@ -96,9 +97,60 @@ const importUser = async(req, res) => {
         }
         await User.insertMany(userData);
       });
-      res.send({status:200,success:true,msg:'Csv Imported'})
+    res.send({ status: 200, success: true, msg: "Csv Imported" });
   } catch {}
 };
+
+const bookingUser = async (req, res) => {
+  try {
+    let { name, email, mobile, date, slot } = req.body;
+
+    // Convert the date to YYYY-MM-DD format
+    const parsedDate = new Date(date);
+    const formattedDate = new Date(Date.UTC(parsedDate.getUTCFullYear(), parsedDate.getUTCMonth(), parsedDate.getUTCDate())).toISOString().split("T")[0];
+
+    // Check if the slot is already booked for the given date
+    const existingBooking = await Booking.findOne({
+      date: formattedDate,
+      slot,
+    });
+    if (existingBooking) {
+      return res.status(400).json({ message: "This slot is already booked" });
+    }
+
+    const booking = await Booking.create({
+      name,
+      email,
+      mobile,
+      date: formattedDate,
+      slot,
+      isSlot: true,
+    });
+    res.status(200).json(booking);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getBookingsByDate = async (req, res) => {
+  try {
+    const { date } = req.query;
+    const bookings = await Booking.find({ date });
+    res.status(200).json(bookings);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getBooking = async (req, res) => {
+  try {
+    const detail = await Booking.find({});
+    res.status(200).json(detail);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getUsers,
   getUser,
@@ -107,4 +159,7 @@ module.exports = {
   deleteUser,
   exportUser,
   importUser,
+  bookingUser,
+  getBookingsByDate,
+  getBooking,
 };

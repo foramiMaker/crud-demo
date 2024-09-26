@@ -25,6 +25,14 @@
   height: 35px;
   margin-left: 5px;
 }
+.booking{
+  margin-top: -60px;
+}
+.details{
+  margin-top: -60px;
+  margin-left: 5px;
+}
+
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
