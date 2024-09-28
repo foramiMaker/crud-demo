@@ -9,6 +9,7 @@ import axios from "axios";
 import FormTable from "./FormTable";
 import Calender from "./Calender";
 import BookingDetail from "./BookingDetail";
+import Chatbox from "./Chat";
 
 axios.defaults.baseURL = "http://localhost:8080/";
 
@@ -18,6 +19,7 @@ function Example() {
   const [dataList, setDataList] = useState([]);
   const [csvFile, setCsvFile] = useState(null);
   const [showDatepicker, setShowDatepicker] = useState(false);
+  const [showChatBox, setShowChatBox] = useState(false);
   const [showBookingDetail, setShowBookingDetail] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -33,6 +35,10 @@ function Example() {
     mobile: "",
     id: "",
   });
+
+  const handleChatbox = () => {
+    setShowChatBox(true);
+  };
 
   const handleBookingClick = () => {
     setShowDatepicker(true);
@@ -124,6 +130,7 @@ function Example() {
     setEditShow(false);
     setShowDatepicker(false);
     setShowBookingDetail(false);
+    setShowChatBox(false);
   };
   const handleShow = () => setShow(true);
   const handleEditShow = (el) => {
@@ -223,24 +230,30 @@ function Example() {
           >
             Download
           </Button>
+          <Button variant="primary" className="chat" onClick={handleChatbox}>
+            chatBox
+          </Button>
         </div>
       </div>
+      <div className="book">
+        <Button
+          variant="primary"
+          // className="booking"
+          onClick={handleBookingClick}
+        >
+          Booking
+        </Button>
 
-      <Button
-        variant="primary"
-        className="booking"
-        onClick={handleBookingClick}
-      >
-        Booking
-      </Button>
+        <Button
+          variant="primary"
+          className="details"
+          onClick={handleBookingDetailClick}
+        >
+          Booking Details
+        </Button>
+      </div>
       {/* {showDatepicker && <Calender handleClose={handleClose} />} */}
-      <Button
-        variant="primary"
-        className="details"
-        onClick={handleBookingDetailClick}
-      >
-        Booking Details
-      </Button>
+
       <Modal show={show || editShow} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>{show ? "Add Form" : "Edit Form"}</Modal.Title>
@@ -265,7 +278,18 @@ function Example() {
           )}
         </Modal.Body>
       </Modal>
-     
+
+      {/* chat box */}
+      <Modal show={showChatBox} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>chat Box</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Chatbox handleClose={handleClose} />
+        </Modal.Body>
+      </Modal>
+
+      {/* calender component */}
       <Modal show={showDatepicker} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>calender Details</Modal.Title>

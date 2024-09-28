@@ -12,27 +12,32 @@
   width: 15vw;
   align-items: center;
   margin: 0 auto;
-  margin-top: 5px;
+  margin-top: 10px;
 }
-.form-detail{
+.book {
+  margin-top: -37px;
+}
+.form-detail {
   display: flex;
 }
-.file-input{
+.file-input {
   width: 30vw;
   margin-top: 10px;
 }
-.import{
+.import {
   height: 35px;
   margin-left: 5px;
 }
-.booking{
+.booking {
   margin-top: -60px;
 }
-.details{
-  margin-top: -60px;
+.details {
+  /* margin-top: -60px; */
   margin-left: 5px;
 }
-
+.chat {
+  margin-left: 5px;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {

@@ -1,8 +1,46 @@
 const User = require("../models/product.model.js");
 const Booking = require("../models/booking.model.js");
 const csv = require("csvtojson");
-
+// const express = require("express");
+// const http = require("http");
+// const WebSocket = require("ws");
 const CsvParser = require("json2csv").Parser;
+// const server = http.createServer(express);
+
+// const chat = (req, res) => {
+
+//   wss.on("connection", (ws) => {
+//     console.log("New client connected");
+
+//     // Handle incoming messages from clients
+//     ws.on("message", (message) => {
+//       console.log("Received query:", message);
+
+//       // Basic chatbot query handling logic
+//       let responseMessage;
+//       const userMessage = message.toLowerCase();
+
+//       if (userMessage.includes("hello") || userMessage.includes("hi")) {
+//         responseMessage = chatbotResponses.greeting;
+//       } else if (userMessage.includes("help")) {
+//         responseMessage = chatbotResponses.help;
+//       } else if (userMessage.includes("services")) {
+//         responseMessage = chatbotResponses.services;
+//       } else {
+//         responseMessage = chatbotResponses.default;
+//       }
+
+//       // Send response back to the client
+//       ws.send(
+//         JSON.stringify({ type: "chatbotResponse", message: responseMessage })
+//       );
+//     });
+
+//     ws.on("close", () => {
+//       console.log("Client disconnected");
+//     });
+//   });
+// };
 
 const getUsers = async (req, res) => {
   try {
@@ -107,8 +145,20 @@ const bookingUser = async (req, res) => {
 
     // Convert the date to YYYY-MM-DD format
     const parsedDate = new Date(date);
-    const formattedDate = new Date(Date.UTC(parsedDate.getUTCFullYear(), parsedDate.getUTCMonth(), parsedDate.getUTCDate())).toISOString().split("T")[0];
-
+    const formattedDate = new Date(
+      Date.UTC(
+        parsedDate.getUTCFullYear(),
+        parsedDate.getUTCMonth(),
+        parsedDate.getUTCDate()
+      )
+    )
+      .toISOString()
+      .split("T")[0];
+    // const formattedDate = new Date(
+    //   (parsedDate.getUTCFullYear(),
+    //   parsedDate.getUTCMonth(),
+    //   parsedDate.getUTCDate())
+    // );
     // Check if the slot is already booked for the given date
     const existingBooking = await Booking.findOne({
       date: formattedDate,
