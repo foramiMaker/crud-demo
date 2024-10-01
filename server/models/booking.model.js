@@ -24,6 +24,11 @@ const BookingScema = mongoose.Schema(
       type: String,
       required: true,
     },
+    amount: {
+      type: Number,
+      required: true,
+    },
+
     isSlot: {
       type: Boolean,
       default: false, // Default value is false

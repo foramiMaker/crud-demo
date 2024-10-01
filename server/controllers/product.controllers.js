@@ -1,11 +1,15 @@
 const User = require("../models/product.model.js");
 const Booking = require("../models/booking.model.js");
+// const Orders = require("../models/order.model.js")
 const csv = require("csvtojson");
-// const express = require("express");
-// const http = require("http");
-// const WebSocket = require("ws");
 const CsvParser = require("json2csv").Parser;
 // const server = http.createServer(express);
+const Razorpay = require("razorpay");
+
+const instance = new Razorpay({
+  key_id: "rzp_test_ekV0HR5il0Avnp", // replace with your Razorpay key id
+  key_secret: "rPPqnXyVxl8lMuBhkzSpGtQD", // replace with your Razorpay key secret
+});
 
 // const chat = (req, res) => {
 
@@ -41,6 +45,24 @@ const CsvParser = require("json2csv").Parser;
 //     });
 //   });
 // };
+
+// Endpoint to create Razorpay order
+const createOrder = async (req, res) => {
+  try {
+    const { amount, currency } = req.body;
+
+    const options = {
+      amount: amount * 100, // Amount in paise (e.g., Rs 500 should be passed as 50000)
+      currency,
+      receipt: `receipt_${Math.floor(Math.random() * 1000000)}`, // Unique receipt id
+    };
+
+    const order = await instance.orders.create(options);
+    res.status(200).json({ orderId: order.id });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 const getUsers = async (req, res) => {
   try {
@@ -141,7 +163,7 @@ const importUser = async (req, res) => {
 
 const bookingUser = async (req, res) => {
   try {
-    let { name, email, mobile, date, slot } = req.body;
+    let { name, email, mobile, date, slot, amount } = req.body;
 
     // Convert the date to YYYY-MM-DD format
     const parsedDate = new Date(date);
@@ -174,6 +196,7 @@ const bookingUser = async (req, res) => {
       mobile,
       date: formattedDate,
       slot,
+      amount,
       isSlot: true,
     });
     res.status(200).json(booking);
@@ -202,6 +225,7 @@ const getBooking = async (req, res) => {
 };
 
 module.exports = {
+  createOrder,
   getUsers,
   getUser,
   createUser,

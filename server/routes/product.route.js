@@ -12,6 +12,7 @@ const {
 } = require("../controllers/product.controllers.js");
 
 const {
+  createOrder,
   getUsers,
   getUser,
   createUser,
@@ -19,7 +20,6 @@ const {
   deleteUser,
   exportUser,
   importUser,
-  
 } = require("../controllers/product.controllers.js");
 const router = express.Router();
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -42,6 +42,7 @@ router.get("/", getUsers);
 router.get("/:id", getUser);
 router.post("/", createUser);
 router.post("/booking", bookingUser);
+router.post("/create-order", createOrder);
 router.post("/import", upload.single("file"), importUser);
 router.put("/:id", updateUser);
 router.delete("/:id", deleteUser);
