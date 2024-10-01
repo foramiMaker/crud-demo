@@ -16,13 +16,13 @@ function Chatbox() {
     setSocket(socketInstance);
 
     // Listen for chatbot responses from the server
-    socketInstance.on("chatbotResponse", (data) => {
-      const { message } = data;
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: message, isUser: false },
-      ]);
-    });
+    // socketInstance.on("chatbotResponse", (data) => {
+    //   const { message } = data;
+    //   setMessages((prevMessages) => [
+    //     ...prevMessages,
+    //     { text: message, isUser: false },
+    //   ]);
+    // });
 
     // Listen for received messages from other clients
     socketInstance.on("received query", (message) => {

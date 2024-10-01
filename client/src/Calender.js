@@ -18,6 +18,7 @@ function Calender({ handleClose }) {
     email: "",
     mobile: "",
     slot: "",
+    amount: "",
   });
 
   const handleChange = (e) => {
@@ -83,31 +84,91 @@ function Calender({ handleClose }) {
     setShowAppointmentForm(true); // Show the appointment form
   };
 
+  // const handleAppointmentSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   try {
+  //     const bookingData = {
+  //       ...formData,
+  //       date: startDate.toDateString(),
+  //       slot: selectedSlot,
+  //     };
+
+  //     const response = await axios.post("api/users/booking", bookingData);
+  //     if (response.data) {
+  //       alert("Booking successfully!");
+  //       setBookedSlots((prev) => [...prev, selectedSlot]); // Add slot to booked slots
+  //       handleClose(); // Close the modal after successful submission
+  //     }
+  //   } catch (error) {
+  //     if (error.response && error.response.status === 400) {
+  //       alert(error.response.data.message);
+  //     } else {
+  //       console.error("Error creating user:", error);
+  //     }
+  //   }
+
+  //   setShowAppointmentForm(false); // Hide the appointment form after booking
+  // };
   const handleAppointmentSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const bookingData = {
-        ...formData,
-        date: startDate.toDateString(),
-        slot: selectedSlot,
+      const amount = formData.amount;
+      // Create Razorpay order via backend
+      const paymentResponse = await axios.post("/api/users/create-order", {
+        amount: amount, // Specify the amount to be charged (replace with your logic)
+        currency: "INR",
+      });
+
+      const { orderId } = paymentResponse.data;
+
+      const options = {
+        key: "rzp_test_ekV0HR5il0Avnp", // Replace with your Razorpay key id
+        amount: amount * 100, // Amount is in paise
+        currency: "INR",
+        name: formData.name,
+        description: "Test Transaction",
+        order_id: orderId, // Pass the order ID obtained from backend
+        handler: async function (response) {
+          // Handle successful payment here
+          try {
+            const bookingData = {
+              ...formData,
+              date: startDate.toDateString(),
+              slot: selectedSlot,
+              paymentId: response.razorpay_payment_id, // Save payment ID for reference
+            };
+
+            const bookingResponse = await axios.post(
+              "/api/users/booking",
+              bookingData
+            );
+
+            if (bookingResponse.data) {
+              alert("Booking successfully!");
+              setBookedSlots((prev) => [...prev, selectedSlot]); // Add slot to booked slots
+              handleClose(); // Close the modal after successful submission
+            }
+          } catch (error) {
+            console.error("Error creating booking:", error);
+          }
+        },
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.mobile,
+        },
+        theme: {
+          color: "#3399cc",
+        },
       };
 
-      const response = await axios.post("api/users/booking", bookingData);
-      if (response.data) {
-        alert("Booking successfully!");
-        setBookedSlots((prev) => [...prev, selectedSlot]); // Add slot to booked slots
-        handleClose(); // Close the modal after successful submission
-      }
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        alert(error.response.data.message);
-      } else {
-        console.error("Error creating user:", error);
-      }
+      console.error("Error in booking:", error);
     }
-
-    setShowAppointmentForm(false); // Hide the appointment form after booking
   };
 
   return (
@@ -207,6 +268,18 @@ function Calender({ handleClose }) {
                   name="mobile"
                   value={formData.mobile}
                   placeholder="Enter mobile number"
+                  onChange={handleChange}
+                />
+              </Col>
+              <Form.Label column sm="2">
+                Amout
+              </Form.Label>
+              <Col sm="10">
+                <Form.Control
+                  type="number"
+                  name="amount"
+                  value={formData.amount}
+                  placeholder="Enter amount"
                   onChange={handleChange}
                 />
               </Col>
